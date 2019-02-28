@@ -165,26 +165,14 @@ For NGINX Plus, you can access the live activity monitoring dashboard:
 
 ## Support For Prometheus Monitoring
 
-If you are using [Prometheus](https://prometheus.io/), you can deploy the NGINX Ingress controller with the [Prometheus exporter](https://github.com/nginxinc/nginx-prometheus-exporter) for NGINX. The exporter will export NGINX metrics into your Prometheus.
+You can expose NGINX or NGINX Plus metrics for collection by [Prometheus](https://prometheus.io/):
 
-To deploy the NGINX Ingress controller with the exporter, use the modified manifests:
-* For a deployment, run:
-    ```
-    $ kubectl apply -f deployment/nginx-ingress-with-prometheus.yaml
-    ```
-* For a daemonset, run:
-    ```
-    $ kubectl apply -f daemon-set/nginx-ingress-with-prometheus.yaml
-    ```
-
-To deploy the NGINX Plus Ingress controller with the exporter, use the modified manifests:
-* For a deployment, run:
-    ```
-    $ kubectl apply -f deployment/nginx-plus-ingress-with-prometheus.yaml
-    ```
-* For a daemon set, run:
-    ```
-    $ kubectl apply -f daemon-set/nginx-plus-ingress-with-prometheus.yaml
+1. Run the Ingress controller with the `-enable-prometheus-metrics` [command-line argument](cli-arguments.md). As a result, the Ingress Controller will expose NGINX or NGINX Plus metrics in the Prometheus format via the path `/metrics` on port `9113` (customizable via the `-prometheus-metrics-listen-port` command-line argument).
+2. Make the Prometheus aware of the Ingress Controller targets by adding the following annotations to the template of the Ingress Controller pod:
+    ```yaml
+    annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9113"
     ```
 
 ## Uninstall the Ingress Controller
